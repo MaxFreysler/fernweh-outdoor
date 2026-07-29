@@ -466,6 +466,62 @@
     opacity: 0.5;
     cursor: default;
   }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(16,22,27,0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal {
+    width: 320px;
+    max-width: 88vw;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 28px 24px 24px;
+    text-align: center;
+    transform: translateY(10px);
+    transition: transform 0.2s ease;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0);
+  }
+  .modal-icon {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--trail);
+    margin-bottom: 14px;
+  }
+  .modal-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--bone);
+    margin: 0 0 22px;
+  }
+  .modal-close {
+    background: var(--trail);
+    color: var(--ink);
+    border: none;
+    border-radius: 2px;
+    padding: 10px 22px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+  }
 </style>
 
 <div class="app">
@@ -518,8 +574,16 @@
           <span class="label">Gesamtsumme</span>
           <span class="value" id="cartTotal">&euro;0</span>
         </div>
-        <button class="cart-checkout" id="cartCheckout" disabled>Zur Kasse (Demo)</button>
+        <button class="cart-checkout" id="cartCheckout" disabled>Zur Kasse (Demo) :)</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="checkoutOverlay">
+    <div class="modal">
+      <div class="modal-icon">:)</div>
+      <p class="modal-text">Das ist eine Demo &ndash; in einer echten Version w&uuml;rde hier der Bezahlvorgang starten.</p>
+      <button class="modal-close" id="checkoutClose">Schlie&szlig;en</button>
     </div>
   </div>
 </div>
@@ -645,8 +709,24 @@
   cartOverlay.addEventListener('click', e => {
     if (e.target === cartOverlay) closeCart();
   });
+
+  const checkoutOverlay = document.getElementById('checkoutOverlay');
+  const checkoutClose = document.getElementById('checkoutClose');
+
+  function openCheckout() { checkoutOverlay.classList.add('open'); }
+  function closeCheckout() { checkoutOverlay.classList.remove('open'); }
+
+  cartCheckout.addEventListener('click', openCheckout);
+  checkoutClose.addEventListener('click', closeCheckout);
+  checkoutOverlay.addEventListener('click', e => {
+    if (e.target === checkoutOverlay) closeCheckout();
+  });
+
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeCart();
+    if (e.key === 'Escape') {
+      closeCheckout();
+      closeCart();
+    }
   });
 
   renderCart();
