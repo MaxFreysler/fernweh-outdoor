@@ -750,10 +750,23 @@ Verhalten:
 
   let history = [];
 
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderMarkdown(str) {
+    return escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+
   function addMessage(role, text) {
     const div = document.createElement('div');
     div.className = 'msg ' + role;
-    div.textContent = text;
+    div.innerHTML = renderMarkdown(text);
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
     return div;
